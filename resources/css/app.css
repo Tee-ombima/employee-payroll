@@ -31,3 +31,13 @@
     color: white;
     border-color: #3b82f6;
 }
+.logout-button {
+    background: #f56565;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+.logout-button:hover {
+    background: #e53e3e;
+}

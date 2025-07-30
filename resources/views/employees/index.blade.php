@@ -2,8 +2,10 @@
 
 @section('content')
 <div class="bg-white shadow rounded-lg p-6">
+
     <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Employees</h1>
+   
     <div class="flex justify-between items-center mb-6">
     <div class="flex space-x-4">
        <a href="{{ route('payroll.index') }}" 
