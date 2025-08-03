@@ -1,94 +1,92 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Payslip</title>
+    <link rel="stylesheet" href="{{ public_path('css/pdf.css') }}">
+</head>
+<body>
 
-@section('content')
-<div class="p-8">
-    <div class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-2xl font-bold">PAYSLIP</h1>
-            <p class="text-gray-600">{{ $payPeriod }}</p>
-        </div>
-        <div class="text-right">
-            <p class="font-bold">{{ config('app.name') }}</p>
-            <p class="text-sm text-gray-600">Generated on: {{ $payDate }}</p>
-        </div>
+<div class="header">
+    <h2>PAYSLIP</h2>
+    <p>{{ $payPeriod }}</p>
+</div>
+
+<div class="summary-table">
+    <table>
+        <tr>
+            <td><strong>Employee ID:</strong></td>
+            <td>{{ $employee->employee_id }}</td>
+            <td><strong>Employee Name:</strong></td>
+            <td>{{ $employee->name }}</td>
+        </tr>
+        <tr>
+            <td><strong>Department:</strong></td>
+            <td>{{ $employee->department }}</td>
+            <td><strong>Position:</strong></td>
+            <td>{{ $employee->position }}</td>
+        </tr>
+        <tr>
+            <td><strong>Company:</strong></td>
+            <td colspan="3">{{ config('app.name') }}</td>
+        </tr>
+        <tr>
+            <td><strong>Pay Date:</strong></td>
+            <td colspan="3">{{ $payDate }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="section-title">Earnings & Deductions</div>
+<table>
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th class="right">Amount (KES)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Basic Salary</td>
+            <td class="right">{{ number_format($payrollRecord->gross_salary, 2) }}</td>
+        </tr>
+        <tr>
+            <td><strong>Deductions:</strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>PAYE</td>
+            <td class="right">-{{ number_format($payrollRecord->paye, 2) }}</td>
+        </tr>
+        <tr>
+            <td>SHIF</td>
+            <td class="right">-{{ number_format($payrollRecord->shif, 2) }}</td>
+        </tr>
+        <tr>
+            <td>NSSF</td>
+            <td class="right">-{{ number_format($payrollRecord->nssf, 2) }}</td>
+        </tr>
+        <tr>
+            <td><strong>Total Deductions</strong></td>
+            <td class="right">-{{ number_format($payrollRecord->total_deductions, 2) }}</td>
+        </tr>
+        <tr>
+            <td><strong>Net Salary</strong></td>
+            <td class="right">{{ number_format($payrollRecord->net_salary, 2) }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="grid">
+    <div style="margin-top: 60px; text-align: center;">
+        <span class="border-top">Employer Signature</span>
     </div>
-    
-    <div class="mb-8">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <p class="font-bold">Employee ID:</p>
-                <p>{{ $employee->employee_id }}</p>
-            </div>
-            <div>
-                <p class="font-bold">Employee Name:</p>
-                <p>{{ $employee->name }}</p>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <p class="font-bold">Department:</p>
-                <p>{{ $employee->department }}</p>
-            </div>
-            <div>
-                <p class="font-bold">Position:</p>
-                <p>{{ $employee->position }}</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="mb-8">
-        <table class="w-full border-collapse">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="py-2 px-4 text-left border">Description</th>
-                    <th class="py-2 px-4 text-right border">Amount (KES)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="py-2 px-4 border">Basic Salary</td>
-                    <td class="py-2 px-4 text-right border">{{ number_format($payrollRecord->gross_salary, 2) }}</td>
-                </tr>
-                
-                <!-- Deductions -->
-                <tr class="bg-gray-50">
-                    <td class="py-2 px-4 font-bold border">Deductions</td>
-                    <td class="py-2 px-4 text-right border"></td>
-                </tr>
-                <tr>
-                    <td class="py-2 px-4 border">PAYE</td>
-                    <td class="py-2 px-4 text-right border">{{ number_format($payrollRecord->paye, 2) }}</td>
-                </tr>
-                <tr>
-                    <td class="py-2 px-4 border">SHIF</td>
-                    <td class="py-2 px-4 text-right border">{{ number_format($payrollRecord->shif, 2) }}</td>
-                </tr>
-                
-                <tr>
-                    <td class="py-2 px-4 border">NSSF</td>
-                    <td class="py-2 px-4 text-right border">{{ number_format($payrollRecord->nssf, 2) }}</td>
-                </tr>
-                
-                <!-- Totals -->
-                <tr class="bg-gray-50 font-bold">
-                    <td class="py-2 px-4 border">Total Deductions</td>
-                    <td class="py-2 px-4 text-right border">{{ number_format($payrollRecord->total_deductions, 2) }}</td>
-                </tr>
-                <tr class="bg-blue-50 font-bold text-lg">
-                    <td class="py-2 px-4 border">Net Salary</td>
-                    <td class="py-2 px-4 text-right border">{{ number_format($payrollRecord->net_salary, 2) }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-    <div class="grid grid-cols-2 gap-8 mt-12">
-        <div class="text-center">
-            <p class="border-t-2 border-gray-400 pt-2 inline-block">Employer Signature</p>
-        </div>
-        <div class="text-center">
-            <p class="border-t-2 border-gray-400 pt-2 inline-block">Authorized Signature</p>
-        </div>
+    <div style="margin-top: 60px; text-align: center;">
+        <span class="border-top">Authorized Signature</span>
     </div>
 </div>
-@endsection
+
+<p class="center" style="margin-top: 40px;">This is a computer-generated payslip and does not require a signature.</p>
+
+</body>
+</html>

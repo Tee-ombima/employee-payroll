@@ -47,25 +47,26 @@ Route::middleware('auth')->group(function () {
 
     // 📥 Download Payslip as PDF
     Route::get('/payroll-records/{payrollRecord}/download', function (PayrollRecord $payrollRecord) {
-        // 🔧 Make sure pay_period is a Carbon object
         $payPeriod = $payrollRecord->pay_period instanceof \Carbon\Carbon
             ? $payrollRecord->pay_period
             : \Carbon\Carbon::parse($payrollRecord->pay_period);
-
+    
         $data = [
             'employee'      => $payrollRecord->employee,
             'payrollRecord' => $payrollRecord,
             'payPeriod'     => $payPeriod->format('F Y'),
             'payDate'       => now()->format('d-m-Y'),
         ];
-
+    
         return PDF::loadView('employees.payslip', $data)
+            ->setPaper('A4', 'portrait')
             ->download("payslip-{$payrollRecord->employee->employee_id}-{$payPeriod->format('Y-m')}.pdf");
     })->name('payslip.download');
+    
 
     // 🧾 Bulk Payslip Generation
-    Route::get('employees/generate-all-payslips', [EmployeeController::class, 'generateAllPayslips'])
-        ->name('employees.generate-all-payslips');
+    Route::post('employees/generate-all-payslips', [EmployeeController::class, 'generateAllPayslips'])
+    ->name('employees.generate-all-payslips');
 
     // 💰 Payroll Management
     Route::get('/payroll', [PayrollController::class, 'index'])

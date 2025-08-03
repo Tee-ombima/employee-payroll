@@ -70,26 +70,28 @@
             <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-md w-full z-50">
                 <div class="px-4 sm:px-6 py-4">
                     <h3 class="text-base sm:text-lg font-medium text-gray-900">Generate Payslips for All Employees</h3>
-                    <form action="{{ route('employees.generate-all-payslips') }}" method="GET" class="mt-4">
-                        <div class="mb-4">
-                            <label for="pay_period" class="block text-xs sm:text-sm font-medium text-gray-700">Pay Period</label>
-                            <input type="month" name="pay_period" id="pay_period" required
-                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-xs sm:text-sm"
-                                   value="{{ now()->format('Y-m') }}"
-                                   max="{{ now()->format('Y-m') }}">
-                        </div>
-                        <div class="flex justify-end space-x-2">
-                            <button type="button"
-                                    onclick="document.getElementById('generateAllModal').classList.add('hidden')"
-                                    class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-xs sm:text-sm">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white rounded hover:bg-green-700 text-xs sm:text-sm">
-                                Generate
-                            </button>
-                        </div>
-                    </form>
+                    <form action="{{ route('employees.generate-all-payslips') }}" method="POST" class="mt-4">
+    @csrf
+    <div class="mb-4">
+        <label for="pay_period" class="block text-xs sm:text-sm font-medium text-gray-700">Pay Period</label>
+        <input type="month" name="pay_period" id="pay_period" required
+               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-xs sm:text-sm"
+               value="{{ now()->format('Y-m') }}"
+               max="{{ now()->format('Y-m') }}">
+    </div>
+    <div class="flex justify-end space-x-2">
+        <button type="button"
+                onclick="document.getElementById('generateAllModal').classList.add('hidden')"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-xs sm:text-sm">
+            Cancel
+        </button>
+        <button type="submit"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white rounded hover:bg-green-700 text-xs sm:text-sm">
+            Generate
+        </button>
+    </div>
+</form>
+
                 </div>
             </div>
         </div>
