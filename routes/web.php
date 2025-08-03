@@ -1,46 +1,80 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\DeductionController;
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PayrollController;
+use App\Models\PayrollRecord;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+// Redirect root to login
+Route::redirect('/', '/login');
 
 // Authentication Routes
 Auth::routes();
-Route::redirect('/', '/login');
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
-    // Home Dashboard
+
+    // 📊 Dashboard
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    // Change the payroll route to payslip
-Route::get('employees/{employee}/payslip', [EmployeeController::class, 'generatePayslip'])
-->name('employees.payslip');
-// Add to your existing routes
-Route::get('employees/generate-all-payslips', [EmployeeController::class, 'generateAllPayslips'])
-    ->name('employees.generate-all-payslips');
 
-// Add new payroll management route
-Route::get('/payroll', [PayrollController::class, 'index'])
-->name('payroll.index');
-Route::post('/payroll/update', [PayrollController::class, 'updateDeductions'])
-->name('payroll.update');
-    
-    // Employee Routes
+    // 👥 Employee Resource Routes
     Route::resource('employees', EmployeeController::class)->names([
-        'index' => 'employees.index',
-        'create' => 'employees.create',
-        'store' => 'employees.store',
-        'show' => 'employees.show',
-        'edit' => 'employees.edit',
-        'update' => 'employees.update',
-        'destroy' => 'employees.destroy'
+        'index'   => 'employees.index',
+        'create'  => 'employees.create',
+        'store'   => 'employees.store',
+        'show'    => 'employees.show',
+        'edit'    => 'employees.edit',
+        'update'  => 'employees.update',
+        'destroy' => 'employees.destroy',
     ]);
-    
-    // Deduction Routes
-    Route::resource('deductions', DeductionController::class)->except(['show']);
-    
 
+    // 📄 Individual Payslip Generation
+    Route::get('employees/{employee}/payslip', [EmployeeController::class, 'generatePayslip'])
+        ->name('employees.payslip');
+
+    // 🔍 Validate payslip period before generation
+    Route::get('/employees/{employee}/validate-payslip', [EmployeeController::class, 'validatePayslipPeriod']);
+
+    // 📁 Check if a payslip exists (AJAX support)
+    Route::get('/employees/{employee}/check-payslip', [EmployeeController::class, 'checkPayslipExists']);
+
+    // 📚 Payroll History for an Employee
+    Route::get('/employees/{employee}/payroll-history', [EmployeeController::class, 'payrollHistory'])
+        ->name('employees.payroll-history');
+
+    // 📥 Download Payslip as PDF
+    Route::get('/payroll-records/{payrollRecord}/download', function (PayrollRecord $payrollRecord) {
+        // 🔧 Make sure pay_period is a Carbon object
+        $payPeriod = $payrollRecord->pay_period instanceof \Carbon\Carbon
+            ? $payrollRecord->pay_period
+            : \Carbon\Carbon::parse($payrollRecord->pay_period);
+
+        $data = [
+            'employee'      => $payrollRecord->employee,
+            'payrollRecord' => $payrollRecord,
+            'payPeriod'     => $payPeriod->format('F Y'),
+            'payDate'       => now()->format('d-m-Y'),
+        ];
+
+        return PDF::loadView('employees.payslip', $data)
+            ->download("payslip-{$payrollRecord->employee->employee_id}-{$payPeriod->format('Y-m')}.pdf");
+    })->name('payslip.download');
+
+    // 🧾 Bulk Payslip Generation
+    Route::get('employees/generate-all-payslips', [EmployeeController::class, 'generateAllPayslips'])
+        ->name('employees.generate-all-payslips');
+
+    // 💰 Payroll Management
+    Route::get('/payroll', [PayrollController::class, 'index'])
+        ->name('payroll_deductions.index');
+        
+    Route::post('/payroll/update', [PayrollController::class, 'updateDeductions'])
+        ->name('payroll_deductions.update');
+
+    // 📈 Analytics
+    Route::get('/payroll/analytics', [EmployeeController::class, 'payrollAnalytics'])
+        ->name('payroll_deductions.analytics');
 });

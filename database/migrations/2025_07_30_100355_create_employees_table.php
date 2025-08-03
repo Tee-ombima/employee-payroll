@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('position');
             $table->string('department');
+            $table->string('custom_department')->nullable();
             $table->decimal('gross_salary', 10, 2);
             $table->date('hire_date');
 

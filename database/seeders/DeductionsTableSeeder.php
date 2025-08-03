@@ -23,21 +23,14 @@ class DeductionsTableSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'name' => 'NHIF',
+                'name' => 'SHIF',
                 'amount' => 500, // Will be calculated dynamically
                 'is_percentage' => false,
                 'is_statutory' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-            [
-                'name' => 'Housing Levy',
-                'amount' => 1.5,
-                'is_percentage' => true,
-                'is_statutory' => true,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
+           
             [
                 'name' => 'NSSF',
                 'amount' => 6, // Tier II percentage
@@ -46,14 +39,7 @@ class DeductionsTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-            [
-                'name' => 'Service Charge',
-                'amount' => 1000,
-                'is_percentage' => false,
-                'is_statutory' => false,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]
+           
         ]);
     }
 }
