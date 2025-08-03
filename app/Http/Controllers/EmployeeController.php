@@ -445,6 +445,22 @@ public function payrollHistory(Employee $employee)
         ));
     }
     
-
+    public function downloadPayslip(PayrollRecord $payrollRecord)
+    {
+        $payPeriod = $payrollRecord->pay_period instanceof Carbon
+            ? $payrollRecord->pay_period
+            : Carbon::parse($payrollRecord->pay_period);
+    
+        $data = [
+            'employee'      => $payrollRecord->employee,
+            'payrollRecord' => $payrollRecord,
+            'payPeriod'     => $payPeriod->format('F Y'),
+            'payDate'       => now()->format('d-m-Y'),
+        ];
+    
+        return Pdf::loadView('employees.payslip', $data)
+            ->setPaper('A4', 'portrait')
+            ->download("payslip-{$payrollRecord->employee->employee_id}-{$payPeriod->format('Y-m')}.pdf");
+    }
 
 }

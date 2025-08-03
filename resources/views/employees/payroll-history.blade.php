@@ -28,7 +28,10 @@
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">KES {{ number_format($record->total_deductions, 2) }}</td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">KES {{ number_format($record->net_salary, 2) }}</td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="{{ route('payslip.download', $record) }}" class="text-blue-600 hover:text-blue-900">Download</a>
+                        <a href="{{ route('payslip.download', $record) }}" class="text-blue-600 hover:text-blue-900">
+    Download
+</a>
+
                     </td>
                 </tr>
                 @endforeach
