@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('payroll_records', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained();
-            $table->date('pay_period');
+            $table->foreignId('employee_id')
+            ->constrained('employees')
+            ->onDelete('cascade');            $table->date('pay_period');
             $table->decimal('gross_salary', 12, 2)->default(0);
             $table->decimal('paye', 10, 2);
             $table->decimal('shif', 8, 2);
